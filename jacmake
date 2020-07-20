@@ -1,0 +1,1 @@
+python3 /usr/local/share/jacmake-sources/main.py "$@"
