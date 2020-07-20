@@ -2,11 +2,14 @@ from sys import argv
 from os import system, remove
 from mainAssemblyGenerator import generateMainAssembly
 
+version = "1.0.0"
+
 arguments = argv[1:]
 object_names = []
 
 if not arguments:
-    print("No input files!")
+    print(f"JACMAKE {version} - help")
+    print("jacmake [input files]... - compile files into one executable")
     exit(0)
 
 for file in arguments:
@@ -27,6 +30,7 @@ entry_file = open(entry_file_path, "w")
 entry_file.write(generateMainAssembly([arguments[0]]))
 entry_file.close()
 system(f"gcc -c {entry_file_path} -o{entry_file_path[:-2]}.o")
+remove(entry_file_path)
 
 object_names.append(f"{entry_file_path[:-2]}.o")
 
