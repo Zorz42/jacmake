@@ -8,12 +8,12 @@ arguments = argv[1:]
 object_names = []
 
 if sys() == "Linux":
-        osplatform = "linux"
-    elif sys() == "Darwin":
-        osplatform = "OSX"
-    else:
-        print("Unsupported platform!")
-        exit(1)
+    osplatform = "linux"
+elif sys() == "Darwin":
+    osplatform = "OSX"
+else:
+    print("Unsupported platform!")
+    exit(1)
 
 if not arguments:
     print(f"JACMAKE {version} - help")
