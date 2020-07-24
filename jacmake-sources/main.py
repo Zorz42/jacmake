@@ -2,7 +2,7 @@ from sys import argv
 from os import system, remove
 from mainAssemblyGenerator import generateMainAssembly
 
-version = "1.0.3"
+version = "1.0.5"
 
 arguments = argv[1:]
 object_names = []
