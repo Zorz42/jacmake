@@ -19,7 +19,7 @@ for file in arguments:
     file_name = ".".join(file_name)
 
     system(f"jaclang {file} -o{file_name}.s --quiet")
-    system(f"gcc -c {file_name}.s -o{file_name}.o")
+    system(f"gcc -s -c {file_name}.s -o{file_name}.o -no-pie")
     remove(f"{file_name}.s")
     object_names.append(f"{file_name}.o")
 
@@ -29,13 +29,14 @@ entry_file_path = entry_file_path_prefix + ("/" if entry_file_path_prefix else "
 entry_file = open(entry_file_path, "w")
 entry_file.write(generateMainAssembly([arguments[0]]))
 entry_file.close()
-system(f"gcc -c {entry_file_path} -o{entry_file_path[:-2]}.o")
+system(f"gcc -c {entry_file_path} -o{entry_file_path[:-2]}.o -no-pie")
 remove(entry_file_path)
 
 object_names.append(f"{entry_file_path[:-2]}.o")
 
 print("Linking files")
-system(f"gcc {' '.join(object_names)} -o{object_names[0][:-2]}")
+system(f"gcc {' '.join(object_names)} -o{object_names[0][:-2]} -no-pie")
 
 for object_file in object_names:
     remove(object_file)
+
