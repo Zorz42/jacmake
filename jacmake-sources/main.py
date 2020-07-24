@@ -1,8 +1,9 @@
 from sys import argv
 from os import system, remove
 from mainAssemblyGenerator import generateMainAssembly
+from platform import system as sys
 
-version = "1.0.5"
+version = "1.0.6"
 
 arguments = argv[1:]
 object_names = []
