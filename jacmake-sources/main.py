@@ -1,51 +1,62 @@
-from sys import argv
-from os import system, remove
-from mainAssemblyGenerator import generateMainAssembly
+from sys import version_info, argv
+from os import remove
 from platform import system as sys
 
-version = "1.0.6"
+from entryGenerator import generateEntry
+from compilerLayer import compileJaclang, compileAssembly, linkObjects
 
+version = "1.1.0"
 arguments = argv[1:]
 object_names = []
 
-if sys() == "Linux":
-    osplatform = "linux"
-elif sys() == "Darwin":
-    osplatform = "OSX"
-else:
-    print("Unsupported platform!")
-    exit(1)
 
-if not arguments:
-    print(f"JACMAKE {version} - help")
-    print("jacmake [input files]... - compile files into one executable")
-    exit(0)
+def main():
+    if version_info.major != 3:
+        print("Must be using python3!")
+        exit(1)
 
-for file in arguments:
-    print(f"Compiling {file}")
-    file_name = file.split(".")
-    file_name.pop()
-    file_name = ".".join(file_name)
+    if sys() != "Linux" and sys() != "Darwin":
+        print("Unsupported platform!")
+        exit(1)
 
-    system(f"jaclang {file} -o{file_name}.s --quiet")
-    system(f"gcc -c {file_name}.s -o{file_name}.o {'-no-pie' if osplatform == 'linux' else ''}")
-    remove(f"{file_name}.s")
-    object_names.append(f"{file_name}.o")
+    if not arguments:
+        print(f"Jacmake {version} - help")
+        print("jacmake [input files/directories]... - compile files into one executable, you can also compile:")
+        print("     - jaclang packages/libraries (automatically called by jpm)")
+        print("     - jaclang projects (coming soon...)")
+        exit(0)
 
-print("Generating entry")
-entry_file_path_prefix = "/".join(object_names[0].split("/")[:-1])
-entry_file_path = entry_file_path_prefix + ("/" if entry_file_path_prefix else "") + "__entry.s"
-entry_file = open(entry_file_path, "w")
-entry_file.write(generateMainAssembly([arguments[0]]))
-entry_file.close()
-system(f"gcc -c {entry_file_path} -o{entry_file_path[:-2]}.o {'-no-pie' if osplatform == 'linux' else ''}")
-remove(entry_file_path)
+    for file in arguments:
+        print(f"Compiling {file}")
+        if not file.endswith(".jl"):
+            print("Unknown file extension!")
+            exit(0)
+        if file == "__entry.jl":
+            print("File cannot be named \"__entry.jl\"")
+            exit(0)
 
-object_names.append(f"{entry_file_path[:-2]}.o")
+        file_name = ".".join(file.split(".")[:-1])
 
-print("Linking files")
-system(f"gcc {' '.join(object_names)} -o{object_names[0][:-2]} {'-no-pie' if osplatform == 'linux' else ''}")
+        compileJaclang(file_name)
+        object_names.append(f"{file_name}.o")
 
-for object_file in object_names:
-    remove(object_file)
+    print("Generating entry")
+    entry_file_path_prefix = "/".join(object_names[0].split("/")[:-1])
+    entry_file_path = entry_file_path_prefix + ("/" if entry_file_path_prefix else "") + "__entry"
+    with open(f"{entry_file_path}.s", "w") as entry_file:
+        entry_file.write(generateEntry([arguments[0]]))
+
+    compileAssembly(entry_file_path)
+
+    object_names.append(f"{entry_file_path}.o")
+
+    print("Linking files")
+    linkObjects(object_names, object_names[0][:-2])
+
+    for object_file in object_names:
+        remove(object_file)
+
+
+if __name__ == '__main__':
+    main()
 
