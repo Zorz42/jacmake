@@ -19,7 +19,7 @@ def compileFiles(files_to_compile: list):
 
         file_name = ".".join(file.split(".")[:-1])
 
-        compileJaclang(file_name)
+        compileJaclang(f"{file_name}.jl", f"{file_name}.s")
         object_names.append(f"{file_name}.o")
 
     print("Generating entry")
