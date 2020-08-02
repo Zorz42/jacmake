@@ -5,7 +5,7 @@ from platform import system as sys
 from fileCompiler import compileFiles
 from dirCompiler import compileDirs
 
-version = "1.1.1"
+version = "1.1.2"
 arguments = argv[1:]
 
 
