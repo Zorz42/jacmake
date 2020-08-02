@@ -7,7 +7,7 @@ from compilerLayer import compileJaclang
 def compileSrcDir(src_dir: str, obj_dir: str):
     for file in listdir(src_dir):
         if path.isfile(src_dir + file) and file.endswith(".jl"):
-            compileJaclang(f"{src_dir}{file}", f"{obj_dir}{file[:-3]}.s")
+            compileJaclang(f"{src_dir}{file}", f"{obj_dir}{file[:-3]}.o")
         elif path.isdir(src_dir + file):
             mkdir(obj_dir + file)
             compileSrcDir(src_dir + file, obj_dir + file)

@@ -19,7 +19,7 @@ def compileFiles(files_to_compile: list):
 
         file_name = ".".join(file.split(".")[:-1])
 
-        compileJaclang(f"{file_name}.jl", f"{file_name}.s")
+        compileJaclang(f"{file_name}.jl", f"{file_name}.o")
         object_names.append(f"{file_name}.o")
 
     print("Generating entry")
@@ -28,7 +28,7 @@ def compileFiles(files_to_compile: list):
     with open(f"{entry_file_path}.s", "w") as entry_file:
         entry_file.write(generateEntry([files_to_compile[0]]))
 
-    compileAssembly(entry_file_path)
+    compileAssembly(f"{entry_file_path}.s", f"{entry_file_path}.o")
 
     object_names.append(f"{entry_file_path}.o")
 
