@@ -1,0 +1,3 @@
+jacmake [input files/directories]... - compile files into one executable, you can also compile:
+     - jaclang packages/libraries (automatically called by jpm)
+     - jaclang projects (coming soon...)

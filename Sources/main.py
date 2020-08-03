@@ -5,7 +5,7 @@ from platform import system as sys
 from fileCompiler import compileFiles
 from dirCompiler import compileDirs
 
-version = "1.1.3"
+version = "1.1.4"
 arguments = argv[1:]
 
 
@@ -20,9 +20,8 @@ def main():
 
     if not arguments:
         print(f"Jacmake {version} - help")
-        print("jacmake [input files/directories]... - compile files into one executable, you can also compile:")
-        print("     - jaclang packages/libraries (automatically called by jpm)")
-        print("     - jaclang projects (coming soon...)")
+        with open("/usr/local/Jac/Data/jacmake-help.txt") as help_file:
+            print(help_file.read(), end='')
         exit(0)
 
     compileDirs([file for file in arguments if path.isdir(file)])
