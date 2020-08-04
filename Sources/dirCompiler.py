@@ -21,7 +21,9 @@ def compileLibrary(dir_name: str):
         rmtree(f"{dir_name}Objects")
     mkdir(f"{dir_name}Objects")
     compileSrcDir(f"{dir_name}Sources/", f"{dir_name}Objects/")
-    compileObjectsIntoDylib(object_names, f"{dir_name}/lib.dylib")
+    if object_names:
+        compileObjectsIntoDylib(object_names, f"{dir_name}/lib.dylib")
+    rmtree(f"{dir_name}Objects/")
 
 
 def compileDir(dir_name: str):
@@ -30,7 +32,7 @@ def compileDir(dir_name: str):
     if path.isfile(f"{dir_name}Info.json") and path.isdir(f"{dir_name}Sources"):
         compileLibrary(dir_name)
     else:
-        print(f"Warning: skipping {dir_name} as it is not recognized as anything.")
+        print(f"Warning: skipping {dir_name} as it is not recognized as anything or has already been compiled.")
 
 
 def compileDirs(dirs_to_compile: list):
