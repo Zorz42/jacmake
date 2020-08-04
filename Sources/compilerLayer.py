@@ -14,3 +14,7 @@ def linkObjects(input_files: list, output_file: str):
 def compileJaclang(input_file: str, output_file: str):
     system(f"/usr/local/Jac/Binaries/jaclang {input_file} -o{output_file}.s --quiet")
     compileAssembly(f"{output_file}.s", output_file)
+
+
+def compileObjectsIntoDylib(input_files: list, output_file: str):
+    system(f"gcc -dynamiclib -undefined suppress -flat_namespace {' '.join(input_files)} -o{output_file}")

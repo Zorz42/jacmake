@@ -1,12 +1,15 @@
 from os import path, mkdir, listdir
 from shutil import rmtree
 
-from compilerLayer import compileJaclang
+from compilerLayer import compileJaclang, compileObjectsIntoDylib
+
+object_names = []
 
 
 def compileSrcDir(src_dir: str, obj_dir: str):
     for file in listdir(src_dir):
         if path.isfile(src_dir + file) and file.endswith(".jl"):
+            object_names.append(f"{obj_dir}{file[:-3]}.o")
             compileJaclang(f"{src_dir}{file}", f"{obj_dir}{file[:-3]}.o")
         elif path.isdir(src_dir + file):
             mkdir(obj_dir + file)
@@ -18,6 +21,7 @@ def compileLibrary(dir_name: str):
         rmtree(f"{dir_name}Objects")
     mkdir(f"{dir_name}Objects")
     compileSrcDir(f"{dir_name}Sources/", f"{dir_name}Objects/")
+    compileObjectsIntoDylib(object_names, f"{dir_name}/lib.dylib")
 
 
 def compileDir(dir_name: str):
