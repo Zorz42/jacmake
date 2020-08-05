@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
-from sys import version_info, argv
+from sys import version_info, argv, path as import_path
 from os import path
 from platform import system as sys
+
+import_path.append("/usr/local/Jac/Jacmake")
 
 from fileCompiler import compileFiles
 from dirCompiler import compileDirs
 
-version = "1.2.2"
+version = "1.2.3"
 arguments = argv[1:]
 
 
