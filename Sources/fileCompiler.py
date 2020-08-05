@@ -1,11 +1,11 @@
-from os import remove
+from os import remove, path
 
 from entryGenerator import generateEntry
 from compilerLayer import compileJaclang, compileAssembly, linkObjects
 
 
 def compileFiles(files_to_compile: list):
-    object_names = []
+    object_names, libraries_to_link = [], []
     if not files_to_compile:
         return
     for file in files_to_compile:
@@ -19,7 +19,7 @@ def compileFiles(files_to_compile: list):
 
         file_name = ".".join(file.split(".")[:-1])
 
-        compileJaclang(f"{file_name}.jl", f"{file_name}.o")
+        libraries_to_link += compileJaclang(f"{file_name}.jl", f"{file_name}.o")
         object_names.append(f"{file_name}.o")
 
     print("Generating entry")
@@ -32,8 +32,11 @@ def compileFiles(files_to_compile: list):
 
     object_names.append(f"{entry_file_path}.o")
 
+    libraries_to_link = [f"/usr/local/Jac/Libraries/{library}/lib.dylib" for library in libraries_to_link if
+                         path.isfile(f"/usr/local/Jac/Libraries/{library}/lib.dylib")]
+
     print("Linking files")
-    linkObjects(object_names, object_names[0][:-2])
+    linkObjects(object_names + libraries_to_link, object_names[0][:-2])
 
     for object_file in object_names:
         remove(object_file)
