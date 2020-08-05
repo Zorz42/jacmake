@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from sys import version_info, argv
 from os import path
 from platform import system as sys
@@ -5,7 +7,7 @@ from platform import system as sys
 from fileCompiler import compileFiles
 from dirCompiler import compileDirs
 
-version = "1.2.1"
+version = "1.2.2"
 arguments = argv[1:]
 
 
