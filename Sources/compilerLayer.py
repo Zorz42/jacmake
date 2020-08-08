@@ -21,4 +21,4 @@ def compileJaclang(input_file: str, output_file: str):
 
 
 def compileObjectsIntoDylib(input_files: list, output_file: str):
-    system(f"gcc -dynamiclib {' '.join(input_files)} -o{output_file}")
+    system(f"gcc -shared -dynamiclib {' '.join(input_files)} -o{output_file}")
