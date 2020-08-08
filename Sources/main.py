@@ -9,7 +9,7 @@ import_path.append("/usr/local/Jac/Jacmake")
 from fileCompiler import compileFiles
 from dirCompiler import compileDirs
 
-version = "1.2.7"
+version = "1.2.8"
 arguments = argv[1:]
 
 
