@@ -4,12 +4,12 @@ from subprocess import run, PIPE
 
 
 def compileAssembly(input_file: str, output_file: str):
-    system(f"gcc -c {input_file} -o{output_file} {'-no-pie' if sys() == 'Linux' else ''}")
+    system(f"gcc -m64 -c {input_file} -o{output_file} {'-no-pie' if sys() == 'Linux' else ''}")
     remove(input_file)
 
 
 def linkObjects(input_files: list, output_file: str):
-    system(f"gcc {' '.join(input_files)} -o{output_file} {'-no-pie' if sys() == 'Linux' else ''}")
+    system(f"gcc -m64 {' '.join(input_files)} -o{output_file} {'-no-pie' if sys() == 'Linux' else ''}")
 
 
 def compileJaclang(input_file: str, output_file: str):
@@ -21,4 +21,4 @@ def compileJaclang(input_file: str, output_file: str):
 
 
 def compileObjectsIntoDylib(input_files: list, output_file: str):
-    system(f"gcc -shared -dynamiclib {' '.join(input_files)} -o{output_file}")
+    system(f"gcc -m64 -shared -dynamiclib {' '.join(input_files)} -o{output_file}")
