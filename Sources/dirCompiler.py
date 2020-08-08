@@ -1,5 +1,6 @@
 from os import path, mkdir, listdir
 from shutil import rmtree
+from platform import system as sys
 
 from compilerLayer import compileJaclang, compileObjectsIntoDylib
 
@@ -22,7 +23,7 @@ def compileLibrary(dir_name: str):
     mkdir(f"{dir_name}Objects")
     compileSrcDir(f"{dir_name}Sources/", f"{dir_name}Objects/")
     if object_names:
-        compileObjectsIntoDylib(object_names, f"{dir_name}/lib.dylib")
+        compileObjectsIntoDylib(object_names, f"{dir_name}/lib.{'so' if sys() == 'Linux' else 'dylib'}")
     rmtree(f"{dir_name}Objects/")
 
 

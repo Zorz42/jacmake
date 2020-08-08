@@ -1,4 +1,5 @@
 from os import remove, path
+from platform import system as sys
 
 from entryGenerator import generateEntry
 from compilerLayer import compileJaclang, compileAssembly, linkObjects
@@ -32,8 +33,9 @@ def compileFiles(files_to_compile: list):
 
     object_names.append(f"{entry_file_path}.o")
 
-    libraries_to_link = [f"/usr/local/Jac/Libraries/{library}/lib.dylib" for library in libraries_to_link if
-                         path.isfile(f"/usr/local/Jac/Libraries/{library}/lib.dylib")]
+    libraries_to_link = [f"/usr/local/Jac/Libraries/{library}/lib.{'so' if sys() == 'Linux' else 'dylib'}" for library
+                         in libraries_to_link if
+                         path.isfile(f"/usr/local/Jac/Libraries/{library}/lib.{'so' if sys() == 'Linux' else 'dylib'}")]
 
     print("Linking files")
     linkObjects(object_names + libraries_to_link, object_names[0][:-2])
