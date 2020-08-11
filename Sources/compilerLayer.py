@@ -1,6 +1,6 @@
 from os import system, remove
 from platform import system as sys
-from subprocess import run, PIPE
+from subprocess import run
 
 
 def compileAssembly(input_file: str, output_file: str):
@@ -13,8 +13,10 @@ def linkObjects(input_files: list, output_file: str):
 
 
 def compileJaclang(input_file: str, output_file: str):
-    command_object = run(f"/usr/local/Jac/Binaries/jaclang {input_file} -o{output_file}.s --__dump-imports", shell=True, stdout=PIPE)
+    command_object = run(f"/usr/local/Jac/Binaries/jaclang {input_file} -o{output_file}.s --__dump-imports", shell=True,
+                         capture_output=True)
     if command_object.returncode:
+        print(command_object.stderr.decode("utf-8"), end='')
         exit(1)
     compileAssembly(f"{output_file}.s", output_file)
     return command_object.stdout.decode("utf-8").split("\n")[:-1]
