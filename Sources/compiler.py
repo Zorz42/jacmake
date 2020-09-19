@@ -8,8 +8,14 @@ from entryGenerator import generateEntry
 
 info_json, object_names = {}, []
 
+source_dir = "Sources/"
+object_dir = "Objects/"
+compiling_dir = ""
+curr_src_dir = "Sources"
+
 
 def compileSrcDir(src_dir: str, obj_dir: str):
+    global curr_src_dir
     for file in listdir(src_dir):
         if path.isfile(src_dir + file) and file.endswith(".jl"):
             object_names.append(f"{obj_dir}{file[:-3]}.o")
@@ -18,48 +24,57 @@ def compileSrcDir(src_dir: str, obj_dir: str):
                 if file == "__entry.jl":
                     print("File cannot be named \"__entry.jl\"")
                     return False
-                if compileJaclang(src_dir + file, f"{obj_dir}{file[:-3]}.o") is None:
+                if compileJaclang(file, f"{file[:-3]}.o", curr_src_dir, compiling_dir, obj_dir) is None:
                     return False
         elif path.isdir(src_dir + file):
-            mkdir(obj_dir + file)
-            if not compileSrcDir(src_dir + file, obj_dir + file):
+            prev_src_dir = curr_src_dir
+            curr_src_dir += f"/{file}"
+            if not path.isdir(obj_dir + file):
+                mkdir(obj_dir + file)
+            if not compileSrcDir(f"{src_dir}{file}/", f"{obj_dir}{file}/"):
                 return False
+            curr_src_dir = prev_src_dir
     return True
 
 
 def compileLibrary(dir_name: str):
-    if path.isdir(f"{dir_name}Objects"):
-        rmtree(f"{dir_name}Objects")
-    mkdir(f"{dir_name}Objects")
-    if not compileSrcDir(f"{dir_name}Sources/", f"{dir_name}Objects/"):
+    if path.isdir(dir_name + object_dir):
+        rmtree(dir_name + object_dir)
+    mkdir(dir_name + object_dir)
+    global curr_src_dir
+    curr_src_dir = "Sources"
+    if not compileSrcDir(dir_name + source_dir, dir_name + object_dir):
         print("Compilation failed!")
         return
     if object_names:
         if not linkObjectsIntoDylib(object_names, f"{dir_name}lib.{'so' if sys() == 'Linux' else 'dylib'}"):
             print("Compilation failed!")
             return
-    rmtree(f"{dir_name}Objects")
+    rmtree(dir_name + object_dir)
 
 
 def compileProgram(dir_name: str, exec_name: str, files_to_execute: list):
-    if not path.isdir(f"{dir_name}Objects"):
-        mkdir(f"{dir_name}Objects")
+    if not path.isdir(dir_name + object_dir):
+        mkdir(dir_name + object_dir)
 
-    if not compileSrcDir(f"{dir_name}Sources/", f"{dir_name}Objects/"):
+    global curr_src_dir
+    curr_src_dir = "Sources"
+    if not compileSrcDir(dir_name + source_dir, dir_name + object_dir):
         print("Compilation failed!")
         return
-    files_to_execute = [dir_name + file for file in files_to_execute]
-    with open(f"{dir_name}Objects/__entry.s", "w") as entry_file:
+    with open(f"{dir_name}{object_dir}__entry.s", "w") as entry_file:
         entry_file.write(generateEntry(files_to_execute))
-    compileAssembly(f"{dir_name}Objects/__entry.s", f"{dir_name}Objects/__entry.o")
-    object_names.append(f"{dir_name}Objects/__entry.o")
+    compileAssembly(f"{dir_name}{object_dir}__entry.s", f"{dir_name}{object_dir}__entry.o")
+    object_names.append(f"{dir_name}{object_dir}__entry.o")
 
-    if not linkObjects(object_names, exec_name):
+    if not linkObjects(object_names, dir_name + exec_name):
         print("Compilation failed!")
         return
 
 
 def compileDir(dir_name: str):
+    global compiling_dir
+    compiling_dir = dir_name
     if not dir_name[-1] == "/":
         dir_name += "/"
 

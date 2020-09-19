@@ -8,7 +8,7 @@ import_path.append("/usr/local/Jac/Jacmake")
 from compiler import compileDirs
 from creator import createDirs
 
-version = "1.2.9"
+version = "1.3.0"
 arguments = argv[1:]
 
 
