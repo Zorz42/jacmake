@@ -17,7 +17,8 @@ def linkObjects(input_files: list, output_file: str):
 def compileJaclang(input_file: str, output_file: str, src_dir: str, proj_dir: str, obj_dir: str):
     if input_file.startswith("./"):
         input_file = input_file[2:]
-    command_object = run(f"cd {proj_dir} && /usr/local/Jac/Binaries/jaclang {src_dir}/{input_file} -o{src_dir}/{output_file}.s --__dump-imports", shell=True,
+    command_object = run(f"cd {proj_dir} && /usr/local/Jac/Binaries/jaclang {src_dir}/{input_file} -o{src_dir}/"
+                         f"{output_file}.s --__dump-imports -iHeaders", shell=True,
                          capture_output=True)
     if command_object.returncode:
         print(command_object.stderr.decode("utf-8"), end='')

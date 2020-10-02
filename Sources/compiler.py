@@ -85,6 +85,7 @@ def compileDir(dir_name: str):
     if not path.isfile(f"{dir_name}Info.json"):
         print(f"Warning: skipping {dir_name} as it is not recognized as anything.")
         return
+
     if not path.isdir(f"{dir_name}Sources"):
         print(f"Warning: skipping {dir_name} as it is not valid.")
         return
@@ -96,22 +97,26 @@ def compileDir(dir_name: str):
         except JSONDecodeError:
             print(f"Warning: skipping {dir_name} as it does not have a valid json file.")
             return
-    if "Type" in info_json:
-        if info_json["Type"] == "Package" or info_json["Type"] == "Dependency":
-            compileLibrary(dir_name)
-        elif info_json["Type"] == "Program":
-            if "ExecName" in info_json and "StartFiles" in info_json:
-                for file in info_json["StartFiles"]:
-                    if not path.isfile(f"{dir_name}/{file}"):
-                        print(f"Starter file {file} does not exist!")
-                        return
-                compileProgram(dir_name, info_json["ExecName"], info_json["StartFiles"])
-            else:
-                print(f"Warning: skipping {dir_name} as it does not have a valid info file.")
-        else:
-            print(f"Warning: skipping {dir_name} as it is not recognized as anything.")
-    else:
+
+    if "Type" not in info_json:
         print(f"Warning: skipping {dir_name} as it does not have a valid info file.")
+        return
+
+    if info_json["Type"] == "Package" or info_json["Type"] == "Dependency":
+        compileLibrary(dir_name)
+
+    elif info_json["Type"] == "Program":
+        if "ExecName" not in info_json or "StartFiles" not in info_json:
+            print(f"Warning: skipping {dir_name} as it does not have a valid info file.")
+            return
+
+        for file in info_json["StartFiles"]:
+            if not path.isfile(f"{dir_name}/{file}"):
+                print(f"Starter file {file} does not exist!")
+                return
+        compileProgram(dir_name, info_json["ExecName"], info_json["StartFiles"])
+    else:
+        print(f"Warning: skipping {dir_name} as it is not recognized as anything.")
 
 
 def compileDirs(dirs: list):
