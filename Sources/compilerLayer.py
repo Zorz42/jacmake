@@ -23,7 +23,7 @@ def compileJaclang(input_file: str, output_file: str, src_dir: str, proj_dir: st
     if command_object.returncode:
         print(command_object.stderr.decode("utf-8"), end='')
         return None
-    compileAssembly(f"{proj_dir}/{src_dir}/{output_file}.s", f"{proj_dir}/{obj_dir}/{output_file}")
+    compileAssembly(f"{proj_dir}/{src_dir}/{output_file}.s", f"{obj_dir}/{output_file}")
     return command_object.stdout.decode("utf-8").split("\n")[:-1]
 
 

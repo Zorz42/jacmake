@@ -1,6 +1,7 @@
 from platform import system as sys
 from re import compile as re_compile
 
+
 def generateEntry(files_to_be_executed: list):
     bare_file = open(f"/usr/local/Jac/Data/entry-{'gnu' if sys() == 'Linux' else 'macho'}.s")
     entry_code = bare_file.read().split("\n")
